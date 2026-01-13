@@ -1,0 +1,334 @@
+student1 = ("Иван", "Иванов", 85, 92)
+student2 = ("Мария", "Петрова", 78, 88)
+student3 = ("Алексей", "Сидоров", 95, 90)
+
+
+students = [student1, student2, student3]
+
+average_scores = {}
+
+top_student = None
+top_average = -1
+
+passed_all = []
+
+for student in students:
+    name, surname, math, physics = student
+    average = (math + physics) / 2
+    average_scores[(name, surname)] = average
+    
+    
+    if average > top_average:
+        top_average = average
+        top_student = (name, surname)
+    
+    
+    if math >= 60 and physics >= 60:
+        passed_all.append((name, surname))
+
+
+print("Средние баллы студентов:")
+for student, avg in average_scores.items():
+    print(f"{student[0]} {student[1]} — {avg}")
+
+print("\nСтудент с самым высоким средним баллом:")
+print(f"{top_student[0]} {top_student[1]} — {top_average}")
+
+print("\nСтуденты, сдавшие все предметы (оценка ≥ 60):")
+for name, surname in passed_all:
+    print(f"{name} {surname}")
+
+
+
+user1_hobbies = {"чтение", "программирование", "музыка", "спорт"}
+user2_hobbies = {"спорт", "путешествия", "фотография", "программирование"}
+
+
+common_interests_op = user1_hobbies & user2_hobbies
+common_interests_method = user1_hobbies.intersection(user2_hobbies)
+
+
+only_user1_op = user1_hobbies - user2_hobbies
+only_user1_method = user1_hobbies.difference(user2_hobbies)
+
+
+only_user2_op = user2_hobbies - user1_hobbies
+only_user2_method = user2_hobbies.difference(user1_hobbies)
+
+
+all_unique_interests_op = user1_hobbies | user2_hobbies
+all_unique_interests_method = user1_hobbies.union(user2_hobbies)
+
+print("Общие интересы (оператор &):", common_interests_op)
+print("Общие интересы (метод intersection()):", common_interests_method)
+
+print("\nИнтересы только у первого пользователя (оператор -):", only_user1_op)
+print("Интересы только у первого пользователя (метод difference()):", only_user1_method)
+
+print("\nИнтересы только у второго пользователя (оператор -):", only_user2_op)
+print("Интересы только у второго пользователя (метод difference()):", only_user2_method)
+
+print("\nВсе уникальные интересы (оператор |):", all_unique_interests_op)
+print("Все уникальные интересы (метод union()):", all_unique_interests_method)
+
+# Исходный список email (с дубликатами)
+emails = [
+    "user1@example.com",
+    "user2@example.com", 
+    "user1@example.com",  # Дубликат
+    "user3@example.com",
+    "user2@example.com",  # Дубликат
+    "admin@example.com",
+    "user4@example.com"
+]
+
+
+original_len = len(emails)
+
+
+unique_emails_set = set(emails)
+
+
+unique_emails = list(unique_emails_set)
+
+
+duplicates_removed = original_len - len(unique_emails_set)
+
+
+has_admin = "admin@example.com" in unique_emails_set
+
+
+print("Исходный список email:", emails)
+print("Уникальные email:", unique_emails)
+print("Количество удалённых дубликатов:", duplicates_removed)
+print("Есть ли 'admin@example.com' в списке:", has_admin)
+
+###1
+import string
+
+# Словарь для хранения паролей
+passwords = {}
+
+# Функция проверки надёжности пароля
+def check_password_strength(password):
+    # Проверки
+    length_ok = len(password) >= 8
+    has_digit = any(char.isdigit() for char in password)
+    has_upper = any(char.isupper() for char in password)
+    special_chars = "!@#$%^&*"
+    has_special = any(char in special_chars for char in password)
+
+    # Оценка надёжности
+    score = sum([length_ok, has_digit, has_upper, has_special])
+
+    if score == 4:
+        return "сильный"
+    elif score == 3:
+        return "средний"
+    else:
+        return "слабый"
+
+# Функция добавления пароля
+def add_password(site, password):
+    strength = check_password_strength(password)
+    passwords[site] = password
+    print(f"Пароль для '{site}' добавлен. Надёжность: {strength}")
+
+# Показать все пароли
+def show_all_passwords():
+    if not passwords:
+        print("Пароли ещё не добавлены.")
+    else:
+        print("Сохранённые пароли:")
+        for site, pwd in passwords.items():
+            print(f"{site}: {pwd}")
+
+# Найти пароль по сайту
+def find_password(site):
+    if site in passwords:
+        print(f"Пароль для '{site}' — {passwords[site]}")
+    else:
+        print(f"Пароль для '{site}' не найден.")
+
+# Пример взаимодействия
+while True:
+    print("\nКоманды: add, show, find, exit")
+    cmd = input("Введите команду: ").strip().lower()
+
+    if cmd == "add":
+        site = input("Введите название сайта: ").strip()
+        pwd = input("Введите пароль: ").strip()
+        add_password(site, pwd)
+
+    elif cmd == "show":
+        show_all_passwords()
+
+    elif cmd == "find":
+        site = input("Введите название сайта: ").strip()
+        find_password(site)
+
+    elif cmd == "exit":
+        print("Выход.")
+        break
+
+    else:
+        print("Неверная команда!")
+
+        
+##### 2
+import random
+import time
+
+game_stats = []
+
+def generate_hint(secret, guess):
+    diff = abs(secret - guess)
+    if diff <= 5:
+        closeness = "Горячо!"
+    elif diff <= 15:
+        closeness = "Тепло"
+    else:
+        closeness = "Холодно"
+    direction = "больше" if guess < secret else "меньше"
+    if guess == secret:
+        direction = "угадано"
+    return f"{closeness} Значение {direction}."
+
+def calculate_score(attempts, elapsed_time):
+    score = 100
+    score -= attempts * 10  
+    if elapsed_time < 10:
+        score += 20
+    elif elapsed_time < 30:
+        score += 10
+    return max(score, 0)  
+
+def play_game():
+    secret = random.randint(1, 100)
+    print("Я загадал число от 1 до 100. Попробуйте угадать!")
+    attempts = 0
+    start = time.time()
+
+    while True:
+        guess = int(input("Введите ваше предположение: "))
+        attempts += 1
+
+        hint = generate_hint(secret, guess)
+        print(hint)
+
+        if guess == secret:
+            elapsed = time.time() - start
+            score = calculate_score(attempts, elapsed)
+            print(f"Поздравляем! Вы угадали число за {attempts} попыток и {elapsed:.1f} секунд. Очки: {score}")
+            game_stats.append({
+                "attempts": attempts,
+                "time": elapsed,
+                "score": score
+            })
+            break
+
+def show_statistics():
+    if not game_stats:
+        print("Статистика игр пуста.")
+    else:
+        print("\nСтатистика прошлых игр:")
+        for i, stat in enumerate(game_stats, start=1):
+            print(f"Игра {i}: Попытки — {stat['attempts']}, Время — {stat['time']:.1f}s, Очки — {stat['score']}")
+
+
+class Product:
+    def __init__(self, name, price, quantity):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+    
+    def __str__(self):
+        return f"{self.name} — {self.price}₽ (в наличии: {self.quantity})"
+
+class Customer:
+    def __init__(self, name, email, balance):
+        self.name = name
+        self.email = email
+        self.balance = balance
+        self.purchase_history = [] 
+    
+    def __str__(self):
+        return f"{self.name} ({self.email}), Баланс: {self.balance}₽"
+
+class Cart:
+    def __init__(self, customer):
+        self.customer = customer
+        self.items = {}  
+
+    def add_product(self, product, amount=1):
+        if product.quantity < amount:
+            print(f"Недостаточно товара: {product.name}")
+            return
+        self.items[product] = self.items.get(product, 0) + amount
+        print(f"Добавлено {amount} × {product.name} в корзину.")
+
+    def remove_product(self, product, amount=1):
+        if product not in self.items:
+            print(f"{product.name} нет в корзине.")
+            return
+        if amount >= self.items[product]:
+            self.items.pop(product)
+        else:
+            self.items[product] -= amount
+        print(f"Удалено {amount} × {product.name} из корзины.")
+
+    def total_price(self):
+        return sum(product.price * qty for product, qty in self.items.items())
+
+    def checkout(self):
+        total = self.total_price()
+        print(f"Итог к оплате: {total}₽")
+        if self.customer.balance >= total:
+            self.customer.balance -= total
+            for product, qty in self.items.items():
+                product.quantity -= qty
+                self.customer.purchase_history.append((product, qty))
+            print("Покупка оформлена!")
+            self.items.clear()
+        else:
+            print("Недостаточно средств для оплаты.")
+
+
+p1 = Product("Футболка", 1200, 10)
+p2 = Product("Кроссовки", 4500, 5)
+p3 = Product("Кепка", 800, 8)
+
+c1 = Customer("Ольга", "olga@example.com", 8000)
+
+cart = Cart(c1)
+
+cart.add_product(p1, 2)
+cart.add_product(p2, 1)
+cart.add_product(p3)
+
+print("\nОбщая сумма:", cart.total_price(), "₽")
+cart.checkout()
+
+print("\nБаланс после покупки:", c1.balance, "₽")
+print("\nОстатки на складе:")
+print(p1)
+print(p2)
+print(p3)
+
+print("\nИстория покупок:")
+for prod, qty in c1.purchase_history:
+    print(f"{qty} × {prod.name}")
+
+
+
+
+        
+
+
+
+
+
+    
+
+
+
