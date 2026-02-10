@@ -319,16 +319,525 @@ print("\nИстория покупок:")
 for prod, qty in c1.purchase_history:
     print(f"{qty} × {prod.name}")
 
+####1 Анализатор текста
+
+def  text_analyzer(text):
+    total_chars = len(text)
+    total_words = len(text.split())
+    uppercase_count = 0
+    lowercase_count = 0
+    digit_count = 0
+    space_count = text.count(' ')
+    word_counts = {}
+
+    for char in text:
+        if char.isupper():
+            uppercase_count += 1
+        elif char.islower():
+            lowercase_count += 1
+        elif char.isdigit():
+            digit_count += 1
+
+    for word in text.split():
+        if word in word_counts:
+            word_counts[word] += 1
+        else:
+            word_counts[word] = 1
+
+    most_common_word = None
+    max_count = 0
+    for word, count in word_counts.items():
+        if count > max_count:
+            max_count = count
+            most_common_word = word
+
+    return {
+        'total_chars': total_chars,
+        'total_words': total_words,
+        'uppercase_count': uppercase_count,
+        'lowercase_count': lowercase_count,
+        'digit_count': digit_count,
+        'space_count': space_count,
+        'most_common_word': most_common_word
+    }
+
+text = "Hello World! Hello Python. Python 3.9"
+result = text_analyzer(text)
+print(result)
+
+#####2 Фильтрация данных
+
+import math
+
+def filter_even(numbers):
+    return [n for n in numbers if n % 2 == 0]
+
+def filter_odd(numbers):
+    return [n for n in numbers if n % 2 != 0]
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def filter_prime(numbers):
+    return [n for n in numbers if is_prime(n)]
+
+def filter_by_range(numbers, start, end):
+    return [n for n in numbers if start <= n <= end]
+
+def filter_by_condition(numbers, condition_func):
+    return [n for n in numbers if condition_func(n)]
+
+def calculate_statistics(numbers):
+    return {
+        'min': min(numbers),
+        'max': max(numbers),
+        'average': sum(numbers) / len(numbers),
+        'sum': sum(numbers),
+        'unique_count': len(set(numbers))
+    }
+
+numbers = list(range(1, 101)) 
+
+print("Четные:", filter_even(numbers))
+print("Нечетные:", filter_odd(numbers))
+print("Простые:", filter_prime(numbers))
+print("В диапазоне 10-20:", filter_by_range(numbers, 10, 20))
+print("Квадраты чисел > 50:", filter_by_condition(numbers, lambda n: n * n > 50))
+print("Статистика:", calculate_statistics(numbers))
+
+######3 Анализатор продаж
+
+def total_revenue(sales):
+    return sum(item['price'] * item['quantity'] for item in sales)
+
+def best_selling_product(sales):
+    product_sales = {}
+    for item in sales:
+        product = item['product']
+        product_sales[product] = product_sales.get(product, 0) + item['quantity']
+    return max(product_sales, key=product_sales.get) if product_sales else None
+
+def best_seller(sales):
+    seller_revenue = {}
+    for item in sales:
+        seller = item['seller']
+        seller_revenue[seller] = seller_revenue.get(seller, 0) + item['price'] * item['quantity']
+    return max(seller_revenue, key=seller_revenue.get) if seller_revenue else None
+
+def sales_by_category(sales):
+    category_revenue = {}
+    for item in sales:
+        category = item['category']
+        category_revenue[category] = category_revenue.get(category, 0) + item['price'] * item['quantity']
+    return category_revenue
+
+def daily_sales(sales):
+    daily_revenue = {}
+    for item in sales:
+        date = item['date']
+        daily_revenue[date] = daily_revenue.get(date, 0) + item['price'] * item['quantity']
+    return daily_revenue
+
+def add_sale(sales, new_sale):
+    required_keys = {'date', 'product', 'category', 'price', 'quantity', 'seller'}
+    if not required_keys.issubset(new_sale.keys()):
+        raise ValueError("Недостающие ключи в новой продаже")
+    if (not isinstance(new_sale['price'], (int, float)) or new_sale['price'] < 0 or
+        not isinstance(new_sale['quantity'], int) or new_sale['quantity'] < 0):
+        raise ValueError("Некорректные значения цены или количества")
+    sales.append(new_sale)
 
 
+
+from datetime import datetime
+
+def generate_report(sales, start_date, end_date):
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+    filtered_sales = [s for s in sales if start <= datetime.strptime(s['date'], "%Y-%m-%d") <= end]
+    report = {
+        'total_revenue': total_revenue(filtered_sales),
+        'best_selling_product': best_selling_product(filtered_sales),
+        'best_seller': best_seller(filtered_sales),
+        'sales_by_category': sales_by_category(filtered_sales),
+        'daily_sales': daily_sales(filtered_sales)
+    }
+    return report
+
+
+import random
+from datetime import datetime, timedelta
+
+def generate_sample_data(num_records):
+    products = ['Ноутбук', 'Мышь', 'Клавиатура', 'Монитор', 'Принтер']
+    categories = ['Электроника', 'Бытовая техника', 'Офисная техника']
+    sellers = ['Иванов', 'Петров', 'Сидоров', 'Козлов', 'Михайлов']
+    sales = []
+
+    start_date = datetime.now() - timedelta(days=365)
+    for _ in range(num_records):
+        date = start_date + timedelta(days=random.randint(0, 365))
+        date_str = date.strftime('%Y-%m-%d')
+        product = random.choice(products)
+        category = random.choice(categories)
+        price = random.randint(500, 100000)
+        quantity = random.randint(1, 10)
+        seller = random.choice(sellers)
+        sales.append({
+            'date': date_str,
+            'product': product,
+            'category': category,
+            'price': price,
+            'quantity': quantity,
+            'seller': seller
+        })
+    return sales
+
+sales = generate_sample_data(100)
+
+print(f"Общая выручка: {total_revenue(sales)} руб.")
+print(f"Лучший товар: {best_selling_product(sales)}")
+print(f"Лучший продавец: {best_seller(sales)}")
+print("Выручка по категориям:", sales_by_category(sales))
+print("Выручка по датам:", daily_sales(sales))
+
+##### Анализатор логов веб-сервера
+
+import random
+from datetime import datetime, timedelta
+
+methods = ['GET', 'POST', 'PUT', 'DELETE']
+paths = ['/index.html', '/api/users', '/api/products', '/admin', '/login', '/static/style.css']
+status_codes = [200, 201, 304, 400, 401, 403, 404, 500]
+user_agents = [
+    'Mozilla/5.0 (Windows NT 10.0)',
+    'Chrome/120.0.0.0 Safari/537.36',
+    'Python-requests/2.31.0',
+    'curl/7.88.1'
+]
+
+with open('server.log', 'w', encoding='utf-8') as f:
+    base_time = datetime(2024, 3, 15, 10, 0, 0)
+    for i in range(25):
+        time = base_time + timedelta(minutes=i*2)
+        ip = f"192.168.1.{random.randint(1, 50)}"
+        method = random.choice(methods)
+        path = random.choice(paths)
+        status = random.choice(status_codes)
+        size = random.randint(100, 5000)
+        agent = random.choice(user_agents)
+        
+        f.write(f'[{time.strftime("%Y-%m-%d %H:%M:%S")}] {ip} - {method} "{path}" {status} {size} "{agent}"\n')
 
         
+        
+import re
+from collections import Counter, defaultdict
+from datetime import datetime
 
+def analyze_server_logs(log_file):
+    stats = {
+        'total_requests': 0,
+        'requests_by_method': {},
+        'requests_by_status': {},
+        'top_ips': [],
+        'errors_4xx_5xx': 0,
+        'busiest_hour': '',
+        'largest_response': 0,
+        'requests_with_ip': defaultdict(list),
+        'requests_with_errors': [],
+        'path_counter': Counter()
+    }
+    
+    
+    log_pattern = re.compile(
+        r'$$(.*?)$$\s+(\d+\.\d+\.\d+\.\d+)\s+-\s+(\w+)\s+"([^"]+)"\s+(\d+)\s+(\d+)\s+"([^"]+)"'
+    )
+    
+    hours_counter = Counter()
 
-
-
+    with open(log_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            match = log_pattern.match(line.strip())
+            if match:
+                time_str, ip, method, path, status_str, size_str, agent = match.groups()
+                
+                time_obj = datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
+                status = int(status_str)
+                size = int(size_str)
+                
+                
+                stats['total_requests'] += 1
+                
+                
+                stats['requests_by_method'][method] = stats['requests_by_method'].get(method, 0) + 1
+                
+                
+                stats['requests_by_status'][status] = stats['requests_by_status'].get(status, 0) + 1
+                
+                
+                stats['requests_with_ip'][ip].append(line.strip())
+                
+                
+                if 400 <= status < 600:
+                    stats['errors_4xx_5xx'] += 1
+                    stats['requests_with_errors'].append(line.strip())
+                
+                
+                if size > stats['largest_response']:
+                    stats['largest_response'] = size
+                
+                
+                hour_str = time_obj.strftime('%H:00-%H:59')
+                hours_counter[hour_str] += 1
+                
+                
+                stats['path_counter'][path] += 1
 
     
+    if hours_counter:
+        stats['busiest_hour'] = hours_counter.most_common(1)[0][0]
+    
+    
+    top_ips = Counter(stats['requests_with_ip']).most_common(5)
+    stats['top_ips'] = [(ip, count) for ip, count in top_ips]
+    
+    return stats
 
+def generate_log_report(stats):
+    total = stats['total_requests']
+    errors = stats['errors_4xx_5xx']
+    max_size = stats['largest_response']
+    method_counts = stats['requests_by_method']
+    status_counts = stats['requests_by_status']
+    top_ips = stats['top_ips']
+    busiest_hour = stats['busiest_hour']
+    
+    print("=== ОТЧЕТ ПО ЛОГАМ СЕРВЕРА ===\n")
+    print("📊 Общая статистика:")
+    print(f"Всего запросов: {total}")
+    error_pct = (errors / total * 100) if total else 0
+    print(f"Ошибочных запросов (4xx/5xx): {errors} ({error_pct:.1f}%)")
+    print(f"Максимальный размер ответа: {max_size} байт\n")
+    
+    print("🔍 Распределение по методам:")
+    for method, count in method_counts.items():
+        pct = (count / total * 100) if total else 0
+        print(f"{method}: {count} запросов ({pct:.1f}%)")
+    print()
+    
+    print("📈 Коды ответов:")
+    total_status = sum(status_counts.values())
+    for code, count in status_counts.items():
+        pct = (count / total_status * 100) if total_status else 0
+        print(f"{code}: {count} ({pct:.1f}%)")
+    print()
+    
+    print("🌐 Топ-5 IP-адресов:")
+    for ip, count in top_ips:
+        print(f"{ip}: {count} запросов")
+    print()
+    
+    print(f"⏰ Самый загруженный час: {busiest_hour} (={stats['busiest_hour']} запросов)")
+
+def find_requests_by_ip(log_file, ip_address):
+ with open(log_file, 'r', encoding='utf-8') as f:
+    return [line for line in f if ip_address in line]
+ 
+ def find_error_requests(log_file):
+    with open(log_file, 'r', encoding='utf-8') as f:
+        return [line for line in f if re.search(r'$$ \d+\.\d+\.\d+\.\d+ - \w+ "[^"]+" (4\d{2}|5\d{2})', line)]
+    
+    def most_popular_path(stats):
+        if not stats['path_counter']:
+            return None
+    return stats['path_counter'].most_common(1)[0][0]
+ 
+
+ ###### Дневник настроения
+
+import os
+from datetime import datetime, timedelta
+
+DIARY_FILE = 'mood_diary.txt'
+
+def add_new_entry():
+    
+    date_input = input("Введите дату (Enter для сегодня): ").strip()
+    if date_input:
+        try:
+            date_obj = datetime.strptime(date_input, '%Y-%m-%d')
+        except ValueError:
+            print("Некорректный формат даты. Используем сегодня.")
+            date_obj = datetime.today()
+    else:
+        date_obj = datetime.today()
+    date_str = date_obj.strftime('%Y-%m-%d')
+    
+    
+    while True:
+        mood_input = input("Настроение (1-5): ").strip()
+        if mood_input in ['1','2','3','4','5']:
+            mood = int(mood_input)
+            break
+        else:
+            print("Пожалуйста, введите число от 1 до 5.")
+    
+   
+    description = input("Опишите день: ").strip()
+    
+    
+    with open(DIARY_FILE, 'a', encoding='utf-8') as f:
+        f.write(f'[{date_str}] Настроение: {mood}/5\n{description}\n\n')
+    
+    print("Запись сохранена!")
+
+def show_statistics():
+    if not os.path.exists(DIARY_FILE):
+        print("Нет записей для анализа.")
+        return
+    
+    entries = []
+    with open(DIARY_FILE, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    blocks = [block.strip() for block in content.strip().split('\n\n') if block.strip()]
+    
+   
+    today = datetime.today()
+    last_week_dates = {(today - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)}
+    
+    total_mood = 0
+    count_mood = 0
+    max_mood = -1
+    max_mood_date = None
+    
+    for block in blocks:
+        lines = block.split('\n')
+        header = lines[0]
+        
+        match = re.match(r'$$(.*?)$$ Настроение: (\d)/5', header)
+        if match:
+            date_str, mood_value = match.groups()
+            mood_value = int(mood_value)
+            
+            if date_str in last_week_dates:
+                total_mood += mood_value
+                count_mood += 1
+                if mood_value > max_mood:
+                    max_mood = mood_value
+                    max_mood_date = date_str
+    
+    if count_mood == 0:
+        print("Нет записей за последнюю неделю.")
+        return
+    
+    avg_mood = total_mood / count_mood
+    print("\n=== Статистика за последнюю неделю ===")
+    print(f"Среднее настроение: {avg_mood:.2f}")
+    if max_mood_date:
+        print(f"Самый счастливый день: {max_mood_date} ({max_mood}/5)")
+    else:
+        print("Нет данных.")
+
+
+def main():
+    print("=== ДНЕВНИК НАСТРОЕНИЯ ===")
+    while True:
+        add_new_entry()
+        cont = input("Хотите добавить еще запись? (да/нет): ").strip().lower()
+        if cont not in ['да', 'д', 'yes', 'y', 'д']:  
+            break
+    
+    
+    show_stat = input("\nПоказать статистику за неделю? (да/нет): ").strip().lower()
+    if show_stat in ['да', 'д', 'yes', 'y']:
+        show_statistics()
+
+if __name__ == "__main__":
+    main()
+
+
+    ########### Система рейтинга ELO
+
+def get_rating_delta(rating_a, rating_b, result, K=32):
+    """
+    Расчет изменения рейтинга для игрока A.
+    :param rating_a: текущий рейтинг игрока A
+    :param rating_b: рейтинг противника
+    :param result: результат для игрока A (1 — победа, 0.5 — ничья, 0 — проигрыш)
+    :param K: коэффициент скорости изменения
+    :return: изменение рейтинга (целое число)
+    """
+    import math
+
+    E = 1 / (1 + 10 ** ((rating_b - rating_a) / 400))
+    delta = round(K * (result - E))
+    return delta
+
+def register_match(p1_id, p2_id, winner, players):
+    """
+    Регистрирует матч и обновляет рейтинги игроков.
+    :param p1_id: ID первого игрока
+    :param p2_id: ID второго игрока
+    :param winner: 1 — победил первый, 2 — второй, 0 — ничья
+    :param players: словарь с данными игроков
+    """
+    p1 = players[p1_id]
+    p2 = players[p2_id]
+
+    
+    if winner == 1:
+        result_p1, result_p2 = 1, 0
+    elif winner == 2:
+        result_p1, result_p2 = 0, 1
+    else:
+        result_p1, result_p2 = 0.5, 0.5
+
+   
+    delta_p1 = get_rating_delta(p1['rating'], p2['rating'], result_p1)
+    delta_p2 = get_rating_delta(p2['rating'], p1['rating'], result_p2)
+
+    
+    p1['rating'] += delta_p1
+    p2['rating'] += delta_p2
+
+    
+    p1['matches'] += 1
+    p2['matches'] += 1
+
+   
+    print(f"Рейтинг игрока {p1['name']} изменился на {delta_p1:+}")
+    print(f"Рейтинг игрока {p2['name']} изменился на {delta_p2:+}")
+
+def show_leaderboard(players):
+    """
+    Выводит таблицу лидеров по убыванию рейтинга.
+    :param players: словарь с данными игроков
+    """
+    sorted_players = sorted(players.items(), key=lambda x: x[1]['rating'], reverse=True)
+    print("\n=== Таблица лидеров ===")
+    for idx, (player_id, info) in enumerate(sorted_players, 1):
+        print(f"{idx}. {info['name']} - {info['rating']} очков ({info['matches']} матчей)")
+
+
+players = {
+    1: {"name": "Алексей", "rating": 1000, "matches": 0},
+    2: {"name": "Мария", "rating": 1000, "matches": 0},
+    3: {"name": "Дмитрий", "rating": 1000, "matches": 0}
+}
+
+
+register_match(1, 2, winner=1, players=players)  
+register_match(2, 3, winner=2, players=players)  
+register_match(1, 3, winner=0, players=players)  
+
+
+show_leaderboard(players)
 
 
